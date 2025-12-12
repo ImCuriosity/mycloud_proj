@@ -1,2 +1,21 @@
+# 1. 패키지 탐색 경로 설정 (CUDA 버전 다운로드를 위해 필수)
+--find-links https://download.pytorch.org/whl/cu118
+--find-links https://data.dgl.ai/wheels/cu118/repo.html
+
+# 2. 핵심 라이브러리 (버전 고정)
+numpy<2.0.0
+torch==2.1.0+cu118
+torchvision==0.16.0+cu118
+torchaudio==2.1.0+cu118
+dgl==1.1.2+cu118
+
+# 3. 데이터 분석 및 시각화 (업데이트됨)
 pandas
+matplotlib
+seaborn
 openpyxl
+
+# 4. 유틸리티
+packaging
+tqdm
+scikit-learn
