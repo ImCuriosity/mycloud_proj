@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc
 import platform
 import random
+from matplotlib.lines import Line2D  # 💡 범례 생성을 위한 모듈 추가
 
 # ==========================================
 # ⚙️ 설정
@@ -253,9 +254,21 @@ def visualize_brand(data, encoders, target_brand, max_nodes=20):
     
     # 라벨 (폰트 주입)
     labels = {n: G.nodes[n].get('label', n) for n in G.nodes}
+    # 타겟 브랜드는 그대로 출력, 나머지는 그대로
     labels[target_brand] = target_brand
     nx.draw_networkx_labels(G, pos, labels, font_size=9, font_family=GLOBAL_FONT_NAME)
     
+    # ---------------------------------------------------------
+    # 📝 [추가됨] 범례 (Legend) 설정
+    # ---------------------------------------------------------
+    legend_elements = [
+        Line2D([0], [0], marker='o', color='w', label='Brand (분석 대상)', markerfacecolor='#FF6B6B', markersize=15),
+        Line2D([0], [0], marker='o', color='w', label='Trademark (상표)', markerfacecolor='#4ECDC4', markersize=10),
+        Line2D([0], [0], marker='o', color='w', label='Class (류 - 산업군)', markerfacecolor='#FFE66D', markersize=12),
+        Line2D([0], [0], marker='o', color='w', label='Group (유사군 - 세부품목)', markerfacecolor='#1A535C', markersize=12)
+    ]
+    plt.legend(handles=legend_elements, loc='upper left', prop={'size': 11, 'family': GLOBAL_FONT_NAME})
+
     # 타이틀 & 저장
     plt.title(f"Brand Ecosystem: {target_brand}", fontsize=15, fontfamily=GLOBAL_FONT_NAME)
     plt.axis('off')
@@ -273,10 +286,7 @@ if __name__ == "__main__":
     init_font()
     data, encoders = load_data()
     
-    # [입력] 분석하고 싶은 브랜드 이름을 여기에 적으세요
-    # (데이터에 있는 실제 브랜드명이어야 합니다)
-    
-    # 예시: 보유 상표 수가 가장 많은 Top 1 브랜드 자동 선택
+    # [입력] 분석하고 싶은 브랜드 이름 (보유 상표 수 1위 자동 선택)
     edge_index = data['company', 'files', 'trademark'].edge_index
     top_idx = torch.bincount(edge_index[0]).argmax().item()
     target_brand = encoders['company_classes'][top_idx]
